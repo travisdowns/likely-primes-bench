@@ -1,3 +1,6 @@
+# perf stuff
+perf.data*
+
 # Prerequisites
 *.d
 
@@ -50,3 +53,6 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# eclipse crap
+.*
