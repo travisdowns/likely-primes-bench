@@ -390,7 +390,6 @@ kernel512_asm:
 .top:
     mov    r15d, BYTE_BITMAPS512
     xor    ecx,ecx
-    xor    esi,esi
     vpxor  xmm0, xmm0
     vpxor  xmm1, xmm1
 .inner:

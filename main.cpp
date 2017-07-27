@@ -628,8 +628,11 @@ void kernel_c(uint8_t *offset_indexes, uint8_t *block_result) {
     }
 }
 
-/* a version of ProcessBitmap256 which only works in chunks of 512 candidates and delegates the tail
- * to a simpler, slower function */
+/* A wrapper class that calls into an inner kernel K to process BLOCK_COUNT * READ_BYTES bytes worth of bitmapped
+ * candidates, and then does the callbacks and popcnt by examining the bitmap. Rince and repeat. It only ever
+ * calls into the kernel will "full blocks" - any trailing odd amount is delegated to the simpler Bitmap1 routine.
+ * This lets the kernels deal with the vast majority of the work without messing about with edge cases.
+ */
 template<kfunc K, size_t READ_BYTES>
 uint64_t WrapBitmap(uint64_t start_, uint64_t end_, const BYTE initial[NUM_PRIME], callback* fn) {
 
@@ -656,7 +659,7 @@ uint64_t WrapBitmap(uint64_t start_, uint64_t end_, const BYTE initial[NUM_PRIME
                 iter, cur, end);
 #endif
 
-        uint8_t block_result[BLOCK_COUNT * READ_BYTES];  // 8 bits * 2 skipping evens
+        alignas(64) uint8_t block_result[BLOCK_COUNT * READ_BYTES];  // 8 bits * 2 skipping evens
 
         K(offset_indexes, block_result);
 
@@ -975,12 +978,11 @@ int main(int argc, char **argv)
         } else {
             fprintf(stderr, "Unknown algorithm: %s\n", algo.c_str());
         }
-
     }
 
     if (command == "tables") {
         make_byte_bitmaps();
-        exit(0);
+        return EXIT_SUCCESS;
     }
 
     if (command == "time") {
@@ -992,51 +994,19 @@ int main(int argc, char **argv)
             printf("Finding all likely primes between %lu and %lu...\n", start, end);
             do_time(start, end, method);
         }
-        exit(0);
+        return EXIT_SUCCESS;
     }
 
-    //    test_state();
-    //    return 0;
-    //    make_bitmaps();
-    //    make_byte_bitmaps();
-    //    return 0;
-
-    //    69780348563, end = 69780340563
-
-    //    check_primes(101010101, 131, ProcessC, AlgoBitmap1);
-
-    //    print_state(15);
-    int64_t start =     331;
-    int64_t   end =     131;
-    //
-    callback cb = print_callback;
-    //
-    ////    do_primes(start, end, ProcessC, (callback *)&cb);
-    //    do_primes(start, end, Bitmap2, (callback *)&cb);
-
-
-    if (argc == 1) {
-        for (start = 133; start < 100000; start += 100) {
-            if (!check_primes(start, std::max(131L, start - 90000), ProcessBitmap256, WrapBitmap<kernel512_asm, 64>)) {
+    if (command == "check") {
+        for (int64_t start = 133; start < 1000000; start += 124) {
+            if (!check_primes(start, std::max(131L, start - 90000), ProcessBitmap256, method)) {
                 exit(1);
             }
         }
         printf("Verified OK!\n");
+        return EXIT_SUCCESS;
     }
 
-    //    return 0;
+    return EXIT_FAILURE;
 
-    uint64_t iters = 1511111111;
-
-    if (argc == 2 || true) {
-        do_time(iters, 131, WrapBitmap<kernel512_asm, 64>);
-    } else {
-        do_time(iters, 131, ProcessBitmap256);
-        //        do_time(iters, 131, ProcessA);
-        //        do_time(iters, 131, ProcessA2);
-    }
-
-    //        do_time(iters, 131, ProcessA2);
-    //        do_time(iters, 131, Bitmap2);
-    return 0;
 }
