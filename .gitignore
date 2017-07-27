@@ -1,6 +1,8 @@
 # perf stuff
 perf.data*
 
+likely-primes
+
 # Prerequisites
 *.d
 

@@ -205,6 +205,8 @@ vpsubb ymm2, ymm2, ymm0                 ; Decrement all the bytes by 1
 sub rcx, rdx
 shr rcx, 1
 
+xor edx, edx
+
 jmp .top
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -221,8 +223,8 @@ vpmovmskb r10d, ymm2                    ; Check the upper bits for underflows
 
 test r10d, r10d
 
-setz r14l
-add rax, r14
+setz dl
+add rax, rdx
 
 dec rcx
 jnz .top

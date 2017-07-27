@@ -407,7 +407,7 @@ uint64_t ProcessBitmap(uint64_t start, uint64_t end, const BYTE initial[NUM_PRIM
 }
 
 /* generic bitmap function */
-uint64_t AlgoBitmap1(uint64_t start, uint64_t end, const BYTE initial[NUM_PRIME], callback* fn) {
+uint64_t Bitmap1(uint64_t start, uint64_t end, const BYTE initial[NUM_PRIME], callback* fn) {
 
     // decrement by 2 initially because the other functions find the first possible prime not from "start"
     // but from start - 2
@@ -670,7 +670,7 @@ uint64_t WrapBitmap(uint64_t start_, uint64_t end_, const BYTE initial[NUM_PRIME
     // we he handle the tail be delegating to ProcessBitmap2
     if (cur >= end) {
         cur += 2;
-        count += do_primes(cur, end, AlgoBitmap1, fn, false);
+        count += do_primes(cur, end, Bitmap1, fn, false);
     }
 
     return count;
@@ -961,7 +961,7 @@ int main(int argc, char **argv)
         } else if (algo == "ProcessC") {
             method = ProcessC;
         } else if (algo == "Bitmap1") {
-            method = AlgoBitmap1;
+            method = Bitmap1;
         } else if (algo == "Bitmap2") {
             method = Bitmap2;
         } else if (algo == "asm256") {
