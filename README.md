@@ -40,19 +40,25 @@ The following algorithms are supported:
  - ProcessA2
  
    A branch-free version of the orignial algorithm which just does the counting in the inner loop and avoids the unpredictable exits to the outer loop
-  - ProcessC
+ - ProcessC
   
    A C version of the original algorithm.
-  - Bitmap1
+ - Bitmap1
+  
    The original 64-bit bitmap + shifts version, slow with two divisions and branch mispredicts.
-  - Bitmap2
+ - Bitmap2
+  
    A table-driven version of Bitmap1.
-  - Bitmap256
+ - Bitmap256
+  
    Kind of a C version of the later 32-byte reading SIMD versions that use lookup tables only (no shifts). 
-  - Bitmap256-kernel
+ - Bitmap256-kernel
+  
    The same as `Bitmap256` except using the generic wrapper around the core code, as used also by the SIMD versions.
-  - asm256
+ - asm256
+  
    A fast lookup-based AVX2 bitmap algorithm that reads 32B in its inner loop.
-  - asm512
+ - asm512
+  
    Same as `asm256` but reads 64 bytes and so needs different lookup tables.
     
